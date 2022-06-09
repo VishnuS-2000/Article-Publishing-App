@@ -1,4 +1,4 @@
-const mongoose=requires('mongoose')
+const mongoose=require('mongoose')
 
 const adminSchema=require("../models/schemas/adminSchema")
 

@@ -1,11 +1,13 @@
 const router=require('express').Router()
+const {getAuthorByQuery,getAuthors,getAuthorById}=require("./controllers/authorController")
 
 
 
 
 
-router.get("/",(req,res)=>{
-    res.send("Welcome to Author Route")
-})
+
+router.get("/search",getAuthorByQuery)
+router.get("/",getAuthors)
+router.get("/:id",getAuthorById)
 
 module.exports=router;
