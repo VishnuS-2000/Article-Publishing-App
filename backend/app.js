@@ -3,6 +3,8 @@ const app=express()
 const cors=require('cors')
 const passport=require('passport')
 
+var path=require('path')
+
 require("./config/passport")(passport)
 
 
@@ -13,6 +15,7 @@ app.use(passport.initialize())
 
 app.use(express.urlencoded({extended:false}))
 app.use(express.json())
+app.use(express.static(path.join(__dirname, 'public')));
 
 
 

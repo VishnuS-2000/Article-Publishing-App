@@ -5,13 +5,12 @@ const {createArticle, updateArticle,deleteArticle}=require("./controllers/articl
 const {signUp,signIn}=require("../routes/controllers/adminController")
 
 
+const {upload}=require("")
 
 router.post("/register",signUp)
 router.post("/login",signIn)
 
  router.use(passport.authenticate('jwt',{session:false}))
-
-
 
 
 router.post("/authors",createAuthor)
@@ -24,7 +23,14 @@ router.put("/article/:id",updateArticle)
 router.delete("/article/:id",deleteArticle)
 
 
+router.post("/upload",upload.single('file'),(req,res)=>{
 
+    if(!req.file){
+        res.status(500).json({success:false,message:"Internal Error,file not found"})
+    }
+
+    res.status(200).json({success:true,data:req.file.filename,message:'Image upload successfull'})
+})
 
 
 module.exports=router;

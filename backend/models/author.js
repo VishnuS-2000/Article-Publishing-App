@@ -24,6 +24,9 @@ Author.init({
     },
     details:{
         type:DataTypes.STRING
+    },
+    photo:{
+           type:DataTypes.STRING
     }
 
 },{

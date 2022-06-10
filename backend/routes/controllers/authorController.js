@@ -44,7 +44,8 @@ module.exports.createAuthor=async(req,res)=>{
         id:req.body.id,
         name:req.body.name,
         designation:req.body.designation,
-        details:req.body.details
+        details:req.body.details,
+        photo:req.body.photoUrl
 
     })
     author.save().then((author)=>{

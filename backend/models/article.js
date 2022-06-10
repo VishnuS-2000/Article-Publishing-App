@@ -27,7 +27,11 @@ Article.init({
     },
      outline:{
         type:DataTypes.ARRAY(DataTypes.STRING)
+    },
+    image:{
+        type:DataTypes.ARRAY(DataTypes.STRING)
     }
+    
 },{
     sequelize,
     modelName:'article'

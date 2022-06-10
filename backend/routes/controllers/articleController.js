@@ -2,6 +2,10 @@ const {Article}=require("../../models/article")
 const {QueryTypes}=require('sequelize')
 const {sequelize}=require("../../config/database")
 
+
+
+
+
 module.exports.getArticles=async(req,res)=>{
 
 
@@ -44,6 +48,19 @@ module.exports.getArticleByQuery=async(req,res)=>{
 
 module.exports.createArticle=async(req,res)=>{
     
+    if(req.file){
+    
+    try{
+        const data=upload.single('file')
+        console.log(data)
+    }
+
+    catch(err){
+        res.status(422).json({err:err,message:'Image upload failed'})
+    }
+
+
+}
 
     const article=await Article.build({
         title:req.body.title,
@@ -52,14 +69,17 @@ module.exports.createArticle=async(req,res)=>{
         outline:req.body.outline,
         content:req.body.content,
         references:req.body.references,
-        authorId:req.body.authorId
+        authorId:req.body.authorId,
+        image:req.body.imageUrl
     })
 
     article.save().then((article)=>{
         res.status(201).json({success:true,result:article,messge:"Article Created"})
 
     }).catch((err)=>res.status(422).json({error:err,message:"Unable to create new article"}))
-    
+
+
+
 }
 
 
@@ -101,4 +121,3 @@ module.exports.deleteArticle=async(req,res)=>{
    
 
 }
-

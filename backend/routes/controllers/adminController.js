@@ -5,7 +5,7 @@ const {genPassword,validatePassword,issueJWT}=require("../../utils/auth")
 
 module.exports.signUp=async(req,res)=>{
 
-
+    console.log(req.body)
     const {salt,hash}=genPassword(req.body.password)
     
     const newAdmin=Admin.build({
@@ -33,11 +33,7 @@ module.exports.signIn=async(req,res)=>{
   
     const admin=await Admin.findOne({where:{username:req.body.username}}).then((admin)=>{
 
-        if(!admin){
-            throw new Error("Invalid credentials")
-        }
-
-        else{
+        if(admin){
 
         
 
@@ -47,9 +43,9 @@ module.exports.signIn=async(req,res)=>{
             
      
     }
-    
 }
-
+    throw new Error("Invalid Credentials")
+    
 
 
     }).catch((err)=>res.status(401).json({success:false,message:err.message}))
