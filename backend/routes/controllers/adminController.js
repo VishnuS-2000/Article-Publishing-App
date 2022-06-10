@@ -1,22 +1,22 @@
-const Admin=require("../../models/admin")
+const {Admin}=require("../../models/admin")
 const {genPassword,validatePassword,issueJWT}=require("../../utils/auth")
 
 
 
-module.exports.signUp=(req,res)=>{
-    console.log(req.body.username,req.body.password)
+module.exports.signUp=async(req,res)=>{
+
 
     const {salt,hash}=genPassword(req.body.password)
     
-    const newAdmin=new Admin({
+    const newAdmin=Admin.build({
         username:req.body.username,
         password:hash,
         salt:salt
     })  
 
-    newAdmin.save().then((admin)=>{
+    await newAdmin.save().then((admin)=>{
 
-        console.log(admin)
+        // console.log(admin.toJSON())
         const data=issueJWT(admin)
 
         res.status(200).json({success:true,admin:admin,token:data.token,expiresIn:data.expiresIn,message:"Successfully registered Admin"})
@@ -26,36 +26,41 @@ module.exports.signUp=(req,res)=>{
 
 }
 
+
+
 module.exports.signIn=async(req,res)=>{
 
-    try
-    {
-    const admin=await Admin.findOne({username:req.body.username})
-    if(admin){
+  
+    const admin=await Admin.findOne({where:{username:req.body.username}}).then((admin)=>{
 
-   
-        if(validatePassword(req.body.password,admin.password,admin.salt)){
-            const data=issueJWT(admin)
-            res.status(200).json({success:true,token:data.token,expiresIn:data.expiresIn,message:"Successfully authenticated Admin"})
+        if(!admin){
+            throw new Error("Invalid credentials")
         }
 
         else{
-            throw new Error("Invalid Password")
-        }
-    }
 
-    else{
-        throw new Error("Username does not exist")
-    }
+        
 
+        if(validatePassword(req.body.password,admin.password,admin.salt)){
+            const data=issueJWT(admin)
+            res.status(200).json({success:true,token:data.token,expiresIn:data.expiresIn,message:"Successfully authenticated Admin"})
+            
+     
     }
-
-    catch(err){
-     res.status(404).json({success:false,message:err.message})
     
-    }
+}
+
+
+
+    }).catch((err)=>res.status(401).json({success:false,message:err.message}))
     
 
 }
 
+module.exports.forgotPassword=()=>{
 
+}
+
+module.exports.changePassword=()=>{
+    
+}

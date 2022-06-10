@@ -1,9 +1,9 @@
 const fs=require('fs')
 const passport=require('passport')
-const Admin = require('../models/admin')
+const {Admin}= require('../models/admin')
 const JwtStratergy=require('passport-jwt').Strategy
 const ExtractJwt=require('passport-jwt').ExtractJwt
-const {genPassword} =require('../utils/auth')
+
 
 
 const PUB_KEY=fs.readFileSync(__dirname+"/../keys/publicKey.pem","utf-8")
@@ -14,8 +14,8 @@ const options={
     algorithms:['RS256']
 }
 
-const stratergy=new JwtStratergy(options,(payload,done)=>{
-    Admin.findOne({_id:payload.sub}).then((user)=>{
+const stratergy=new JwtStratergy(options,async(payload,done)=>{
+    await Admin.findOne({where:{username:payload.sub}}).then((user)=>{
         if(user){
             return done(null,user)
         }

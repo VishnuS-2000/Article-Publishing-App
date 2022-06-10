@@ -26,10 +26,11 @@ const validatePassword=(password,hash,salt)=>{
 function issueJWT(admin){
 
  
-    const _id=admin._id;
+    const username=admin.username;
+    console.log(username)
     const expiresIn='2w'
     const payload={
-        sub:_id,
+        sub:username,
         iat:Date.now()
     }
 

@@ -1,7 +1,42 @@
-const mongoose=require('mongoose')
+const {DataTypes,Model}=require('sequelize')
+const {sequelize}=require('../config/database')
 
-const adminSchema=require("../models/schemas/adminSchema")
+class Admin extends Model {}
 
-const Admin=new mongoose.model('admin',adminSchema)
+Admin.init({
+    id:{
+        type:DataTypes.UUID,
+        defaultValue:DataTypes.UUIDV4,
+        allowNull:false,
+    },
+    username:{
+        type:DataTypes.STRING,
+        allowNull:false,
+        primaryKey:true
+    },
+    password:{
+        type:DataTypes.STRING,
+        allowNull:false
+    },
+    salt:{
+        type:DataTypes.STRING,
+        allowNull:false
+    }
 
-module.exports=Admin
+},{sequelize,modelName:'admin'})
+
+const syncModel=async()=>{
+    
+    try{
+
+    await Admin.sync()
+}
+catch(err){
+    console.log(err)
+}
+
+}
+
+syncModel() 
+
+module.exports.Admin=Admin;

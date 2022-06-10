@@ -1,65 +1,76 @@
 const {Author}=require("../../models/author")
+const {QueryTypes}=require('sequelize')
+const {sequelize}=require("../../config/database")
 
 module.exports.getAuthors=async(req,res)=>{
 
-    try{
-        const authors=await Author.find()
-        res.status(200).json({result:authors,message:"Data loaded successfully"})
-    }
-    catch(err){
-        res.status(404).json({message:"Requested authors was not found"})
-    }        
+        await Author.findAndCountAll({offset:req.body.offset,limit:req.body.limit}).then((authors)=>{
+            res.status(200).json({success:true,result:authors,message:"Data loaded successfully"})
+        }).catch((err)=>{
+            res.status(404).json({success:false,message:"Unknown Error Occurred"})
+        })      
+           
 }
 
 
 module.exports.getAuthorById=async(req,res)=>{
 
-try{
+    await Author.findOne({where:{id:req.params.id}}).then((author)=>{
 
+        res.status(200).json({success:true,result:author,message:"Data loaded successfully"})
 
-    const author=await Author.findOne({_id:req.params.id})
-    res.status(200).json({result:author,message:"Data loaded successfully"})
-
-}
-catch(err){
-    res.status(404).json({error:err,message:"Requested resource not found"})
-}
+    }).catch((err)=>res.status(404).json({success:false,error:err,message:"Author with given id not found"}))
+    
+    
 
 }
 
 
 module.exports.getAuthorByQuery=async(req,res)=>{
+    await sequelize.query(req.body.query,{type:QueryTypes.SELECT}).then((result)=>{
 
+        res.status(200).json({success:true,result,message:'Query executed'})
+
+    }).then((err)=>{
+       res.status(401).json({success:false,error:err,message:'Query Failed'})
+    })
 }
 
 
 module.exports.createAuthor=async(req,res)=>{
     
 
-    const author=new Author({
+    const author=Author.build({
         id:req.body.id,
         name:req.body.name,
-        photo:req.body.photo,
         designation:req.body.designation,
-        misc:req.body.misc,
-        createdAt:Date.now()
+        details:req.body.details
+
     })
     author.save().then((author)=>{
-        res.status(201).json({success:true,result:author,messge:"Created a new author"})
+        res.status(201).json({success:true,result:author,messge:"Author Created"})
 
-    }).catch((err)=>res.status(422).json({error:err,message:"Unable to create new author"}))
+    }).catch((err)=>res.status(422).json({success:false,error:err,message:"Unable to create new author"}))
 
 }
 
 
 
 module.exports.updateAuthor=async(req,res)=>{
-    await Author.updateOne({_id:req.params.id}).then((author)=>{
-
-        res.status(200).json({success:true,result:author,message:"Updated the author"})
-    }).catch((err)=>{
+ 
+    const author=await Author.findOne({where:{id:req.params.id}}).then((author)=>{
         
-        res.status(422).json({error:err,message:"Unable to update the author"})
+        author.set(req.body)
+        return author
+
+    }).catch((err)=>res.status(401).json({success:false,error:err,message:"author with given id not found"}))
+
+    await author.save().then((author)=>{
+
+        res.status(200).json({sucess:true,result:author,message:"Author updated"})
+
+    }).catch((err)=>{
+        res.status(422).json({success:false,error:err,message:"Unable to update the author"})
     })
 
 }
@@ -67,12 +78,16 @@ module.exports.updateAuthor=async(req,res)=>{
 
 
 module.exports.deleteAuthor=async(req,res)=>{
-    await Author.deleteOne({_id:req.params.id}).then((author)=>{
-
-        res.status(200).json({success:true,messge:"Deleted the author"})
+    const author=await Author.findOne({where:{id:req.params.id}}).then((author)=>{
+        return author
     }).catch((err)=>{
         
-        res.status(422).json({error:err,message:"Unable to delete the author"})
+        res.status(401).json({success:false,error:err,message:"Author with given id not found"})
     })
 
+    author.destroy().then(()=>{
+        res.status(200).json({success:true,messge:"Author deleted"})
+    }).catch(err=>res.status(422).json({success:false,error:err,message:"Unable to delete the author"}))
+
 }
+

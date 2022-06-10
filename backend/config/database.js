@@ -1,14 +1,24 @@
-require("dotenv").config()
-const mongoose=require('mongoose')
+require('dotenv').config()
+const {Sequelize}=require('sequelize')
 
-const connection=mongoose.connect(process.env.DB_STRING,(err)=>{
-    if(err){
-        console.log(err)
+const sequelize=new Sequelize(process.env.SQL_DBNAME,process.env.SQL_USERNAME,String(process.env.SQL_PASSWORD),{
+    host:'localhost',
+    dialect:'postgres',
+    logging:false
 
-    }
-
-    else{
-        console.log("Connected to the Database")
-    }
 })
 
+
+const checkConnecion=async()=>{
+    try{
+        await sequelize.authenticate()
+        console.log("Connection Established Successfully")
+        }
+        catch(err){
+            console.log(err.message)
+        }
+}
+
+checkConnecion()
+
+module.exports.sequelize=sequelize;

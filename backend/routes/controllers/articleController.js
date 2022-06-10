@@ -1,86 +1,104 @@
 const {Article}=require("../../models/article")
-
+const {QueryTypes}=require('sequelize')
+const {sequelize}=require("../../config/database")
 
 module.exports.getArticles=async(req,res)=>{
 
-        try{
-            const articles=await Article.find()
-            res.status(200).json({result:articles,message:"Data loaded successfully"})
-        }
-        catch(err){
-            res.status(404).json({message:"Requested articles was not found"})
-        }        
+
+            await Article.findAndCountAll({offset:req.body.offset,limit:req.body.limit}).then((result)=>{
+                res.status(200).json({result,message:"Data loaded successfully"})
+            }).catch((err)=>res.status(404).json({error:err,message:"Unkown Error Occured"}))
+            
+         
 }
 
 
 module.exports.getArticleById=async(req,res)=>{
 
-    try{
+
+        await Article.findOne({where:{id:req.params.id}}).then((article)=>{
+
+            res.status(200).json({result:article,message:"Data loaded successfully"})
+        }).catch((err)=>res.status(404).json({error:err,message:"Article with given id was not found"}))
+        
 
 
-        const article=await Article.findOne({_id:req.params.id})
-        res.status(200).json({result:article,message:"Data loaded successfully"})
+}
+
+
+
+module.exports.getArticleByQuery=async(req,res)=>{
+    await sequelize.query(req.body.query,{type:QueryTypes.SELECT}).then((result)=>{
+
+        res.status(200).json({success:true,result,message:'Query executed'})
+
+    }).then((err)=>{
+       res.status(401).json({success:false,error:err,message:'Query Failed'})
+    })
     
-    }
-    catch(err){
-        res.status(404).json({error:err,message:"Requested resource not found"})
-    }
-
 }
 
-module.exports.getArticleByQuery=(req,res)=>{
-    console.log(req.query)
 
-}
 
 
 
 module.exports.createArticle=async(req,res)=>{
     
 
-    const article=new Article({
+    const article=await Article.build({
         title:req.body.title,
         subtitle:req.body.subtitle,
         topic:req.body.topic,
-        publishedAt:Date.now(),
         outline:req.body.outline,
         content:req.body.content,
         references:req.body.references,
-        visiblity:true
+        authorId:req.body.authorId
     })
+
     article.save().then((article)=>{
-        res.status(201).json({success:true,result:article,messge:"Created a new article"})
+        res.status(201).json({success:true,result:article,messge:"Article Created"})
 
-    }).catch((err)=>res.status(422).json({error:err,message:"Unable to create new resource"}))
+    }).catch((err)=>res.status(422).json({error:err,message:"Unable to create new article"}))
     
-
 }
 
 
 
 module.exports.updateArticle=async(req,res)=>{
-    await Article.updateOne({_id:req.params.id}).then((article)=>{
+    const article=await Article.findOne({where:{id:req.params.id}}).then((article)=>{
 
-        res.status(200).json({success:true,result:article,message:"Updated the article"})
+        article.set(req.body)
+
+        return article
+       
     }).catch((err)=>{
         
-        res.status(422).json({error:err,message:"Unable to update the aricle"})
+        res.status(422).json({error:err,message:"Article with given id not found"})
+
+    })
+
+    article.save().then((article)=>{
+        res.status(200).json({success:true,result:article,message:"Article Updated"})
     })
 
 }
 
 
-
-
-
 module.exports.deleteArticle=async(req,res)=>{
-    await Article.deleteOne({_id:req.params.id}).then((article)=>{
+    const article=await Article.findOne({where:{id:req.params.id}}).then((article)=>{
+        return article
 
-        res.status(200).json({success:true,messge:"Deleted the article"})
     }).catch((err)=>{
         
-        res.status(422).json({error:err,message:"Unable to delete the aricle"})
+        res.status(401).json({success:false,error:err,message:"Article with given id not found"})
+
     })
+
+    article.destroy().then(()=>{
+        res.status(200).json({success:true,messge:"Article Deleted"})
+    }).catch((err)=>res.status(422).json({success:false,error:err,message:"Unable to delete the article"}))
+
+   
 
 }
 

@@ -2,7 +2,7 @@ const express=require('express')
 const app=express()
 const cors=require('cors')
 const passport=require('passport')
-require("./config/database")
+
 require("./config/passport")(passport)
 
 
@@ -23,7 +23,7 @@ app.use("/authors",require("./routes/author"))
 
 app.listen(4000,()=>{
 
-    console.log("The Server started at port 3000...")
+    console.log("The Server started at port 4000...")
 
 })
 
