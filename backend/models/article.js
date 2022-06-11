@@ -18,6 +18,9 @@ Article.init({
     },
     subtitle:{
         type:DataTypes.STRING
+    },topic:{
+        type:DataTypes.STRING,
+        allowNull:false
     },
     content:{
         type:DataTypes.TEXT

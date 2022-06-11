@@ -5,7 +5,7 @@ const {createArticle, updateArticle,deleteArticle}=require("./controllers/articl
 const {signUp,signIn}=require("../routes/controllers/adminController")
 
 
-const {upload}=require("")
+const {upload}=require("../config/multer")
 
 router.post("/register",signUp)
 router.post("/login",signIn)

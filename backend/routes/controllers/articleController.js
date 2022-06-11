@@ -1,6 +1,7 @@
 const {Article}=require("../../models/article")
 const {QueryTypes}=require('sequelize')
 const {sequelize}=require("../../config/database")
+const {Author}=require("../../models/author")
 
 
 
@@ -9,7 +10,7 @@ const {sequelize}=require("../../config/database")
 module.exports.getArticles=async(req,res)=>{
 
 
-            await Article.findAndCountAll({offset:req.body.offset,limit:req.body.limit}).then((result)=>{
+            await Article.findAndCountAll({offset:req.body.offset,limit:req.body.limit,include:[Author],order:[['createdAt','DESC']]}).then((result)=>{
                 res.status(200).json({result,message:"Data loaded successfully"})
             }).catch((err)=>res.status(404).json({error:err,message:"Unkown Error Occured"}))
             
@@ -20,12 +21,11 @@ module.exports.getArticles=async(req,res)=>{
 module.exports.getArticleById=async(req,res)=>{
 
 
-        await Article.findOne({where:{id:req.params.id}}).then((article)=>{
+        await Article.findOne({where:{id:req.params.id},include:[Author]}).then((article)=>{
 
             res.status(200).json({result:article,message:"Data loaded successfully"})
         }).catch((err)=>res.status(404).json({error:err,message:"Article with given id was not found"}))
         
-
 
 }
 
