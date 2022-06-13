@@ -40,20 +40,22 @@ module.exports.getArticleById=async(req,res)=>{
 
 
 module.exports.getArticlesByQuery=async(req,res)=>{
-    
-   req.query.term?Article.findAll({
+
+
+   req.query.term?Article.findAndCountAll({
         where:{
             title:{
                 [Op.iLike]:`%${req.query.term}%`
-            }
-        }    
+            },
+          
+        }   ,  include:[Author] 
    }).then((result)=>{
        res.status(200).json({success:true,result:result,message:'Query Processed'})
 
    }).catch((err)=>{
        res.status(401).json({success:false,error:err,message:'Query Failed'})
    })
-   :Article.findAll({
+   :Article.findAndCountAll({
         where:{
 
             title:{
@@ -61,7 +63,9 @@ module.exports.getArticlesByQuery=async(req,res)=>{
             },
               content:{
                   [Op.iLike]:req.query.keyword?`%${req.query.keyword}%`:'% %'}
-              
+            ,topic:{
+                [Op.like]:req.query.topic?`%${req.query.topic}%`:'% %'
+            }
             
         },include:[{
             model:Author,
