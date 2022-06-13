@@ -39,7 +39,6 @@ module.exports.getArticleById=async(req,res)=>{
 
 
 
-
 module.exports.getArticlesByQuery=async(req,res)=>{
     
    req.query.term?Article.findAll({
