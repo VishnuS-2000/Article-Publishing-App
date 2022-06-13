@@ -1,5 +1,5 @@
 const {Article}=require("../../models/article")
-const {QueryTypes}=require('sequelize')
+const {QueryTypes,Op}=require('sequelize')
 const {sequelize}=require("../../config/database")
 const {Author}=require("../../models/author")
 
@@ -9,10 +9,15 @@ const {Author}=require("../../models/author")
 
 module.exports.getArticles=async(req,res)=>{
 
-
-            await Article.findAndCountAll({offset:req.body.offset,limit:req.body.limit,include:[Author],order:[['createdAt','DESC']]}).then((result)=>{
+            await Article.findAndCountAll({offset:req.headers.offset?req.headers.offset:0,limit:req.headers.limit?req.headers.limit:null,include:[Author],order:[[req.headers.orderfield?req.headers.orderfield:'title',req.headers.ordertype?req.headers.ordertype:'ASC']]}).then((result)=>{
                 res.status(200).json({result,message:"Data loaded successfully"})
-            }).catch((err)=>res.status(404).json({error:err,message:"Unkown Error Occured"}))
+            }).catch((err)=>{
+                console.log(err)
+                res.status(404).json({error:err,message:"Unkown Error Occured"})}
+
+
+            
+            )
             
          
 }
@@ -31,15 +36,50 @@ module.exports.getArticleById=async(req,res)=>{
 
 
 
-module.exports.getArticleByQuery=async(req,res)=>{
-    await sequelize.query(req.body.query,{type:QueryTypes.SELECT}).then((result)=>{
 
-        res.status(200).json({success:true,result,message:'Query executed'})
 
-    }).then((err)=>{
-       res.status(401).json({success:false,error:err,message:'Query Failed'})
-    })
+
+
+module.exports.getArticlesByQuery=async(req,res)=>{
     
+   req.query.term?Article.findAll({
+        where:{
+            title:{
+                [Op.iLike]:`%${req.query.term}%`
+            }
+        }    
+   }).then((result)=>{
+       res.status(200).json({success:true,result:result,message:'Query Processed'})
+
+   }).catch((err)=>{
+       res.status(401).json({success:false,error:err,message:'Query Failed'})
+   })
+   :Article.findAll({
+        where:{
+
+            title:{
+                [Op.iLike]:req.query.title?`%${req.query.title}%`:'% %'
+            },
+              content:{
+                  [Op.iLike]:req.query.keyword?`%${req.query.keyword}%`:'% %'}
+              
+            
+        },include:[{
+            model:Author,
+            where:{
+                name:{
+                    [Op.iLike]:req.query.author?`${req.query.author}%`:'% %'
+                }
+            }
+        }]
+
+   }).then((result)=>{
+       res.status(200).json({success:true,result:result,message:'Query Processed'})
+   }).catch((err)=>{
+            res.status(401).json({success:false,error:err,message:'Query Failed'})
+   })
+
+
 }
 
 

@@ -1,11 +1,11 @@
-const { getArticles, getArticleById,getArticleByQuery } = require('./controllers/articleController');
+const { getArticles, getArticleById,getArticlesByQuery } = require('./controllers/articleController');
 
 const router=require('express').Router()
 
 
 
 
-router.get("/search",getArticleByQuery)
+router.get('/search',getArticlesByQuery)
 router.get("/",getArticles)
 router.get("/:id",getArticleById)
 
