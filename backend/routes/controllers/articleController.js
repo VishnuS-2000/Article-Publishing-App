@@ -42,7 +42,8 @@ module.exports.getArticleById=async(req,res)=>{
 module.exports.getArticlesByQuery=async(req,res)=>{
 
 
-   req.query.term?Article.findAndCountAll({
+   if(req.query.term){
+       Article.findAndCountAll({
         where:{
             title:{
                 [Op.iLike]:`%${req.query.term}%`
@@ -55,17 +56,16 @@ module.exports.getArticlesByQuery=async(req,res)=>{
    }).catch((err)=>{
        res.status(401).json({success:false,error:err,message:'Query Failed'})
    })
-   :Article.findAndCountAll({
-        where:{
 
-            title:{
-                [Op.iLike]:req.query.title?`%${req.query.title}%`:'% %'
-            },
-              content:{
-                  [Op.iLike]:req.query.keyword?`%${req.query.keyword}%`:'% %'}
-            ,topic:{
+}
+
+else if(req.query.topic){
+    Article.findAndCountAll({
+        where:{
+            topic:{
                 [Op.like]:req.query.topic?`%${req.query.topic}%`:'% %'
             }
+          
             
         },include:[{
             model:Author,
@@ -77,11 +77,44 @@ module.exports.getArticlesByQuery=async(req,res)=>{
         }]
 
    }).then((result)=>{
+       console.log(req.query.topic,result)
+    
        res.status(200).json({success:true,result:result,message:'Query Processed'})
    }).catch((err)=>{
             res.status(401).json({success:false,error:err,message:'Query Failed'})
    })
 
+
+}
+
+else{
+Article.findAndCountAll({
+    where:{
+        title:{
+            [Op.iLike]:req.query.title?`%${req.query.title}%`:'% %'
+        },
+          content:{
+              [Op.iLike]:req.query.keyword?`%${req.query.keyword}%`:'% %'}
+       
+        
+    },include:[{
+        model:Author,
+        where:{
+            name:{
+                [Op.iLike]:req.query.author?`${req.query.author}%`:'% %'
+            }
+        }
+    }]
+
+}).then((result)=>{
+   console.log(req.query.topic,result)
+
+   res.status(200).json({success:true,result:result,message:'Query Processed'})
+}).catch((err)=>{
+        res.status(401).json({success:false,error:err,message:'Query Failed'})
+})
+
+}
 
 }
 
