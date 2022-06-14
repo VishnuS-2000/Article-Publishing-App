@@ -6,7 +6,7 @@ const ExtractJwt=require('passport-jwt').ExtractJwt
 
 
 
-const PUB_KEY=fs.readFileSync(__dirname+"/../keys/publicKey.pem","utf-8")
+const PUB_KEY=process.env.PUBLIC_KEY
 
 const options={
     jwtFromRequest:ExtractJwt.fromAuthHeaderAsBearerToken(),
