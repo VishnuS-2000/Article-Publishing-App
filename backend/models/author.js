@@ -1,4 +1,4 @@
-const {DataTypes,Model} =require('sequelize')
+const {DataTypes,Model, STRING} =require('sequelize')
 const {sequelize}=require('../config/database')
 
 class Author extends Model{}
@@ -15,15 +15,18 @@ Author.init({
         type:DataTypes.STRING,
         allowNull:false,
     },
-    designation:{
+    bio:{
         type:DataTypes.STRING
     },
     articlesPublished:{
         type:DataTypes.INTEGER,
         defaultValue:0
     },
-    details:{
+    email:{
         type:DataTypes.STRING
+    },
+    specialization:{
+        type:DataTypes.ARRAY(STRING)
     },
     photo:{
            type:DataTypes.STRING

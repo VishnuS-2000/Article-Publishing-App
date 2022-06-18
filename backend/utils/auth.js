@@ -2,8 +2,8 @@ const crypto=require('crypto')
 const jwt=require('jsonwebtoken')
 const fs=require('fs')
 
-
 const PRIVATE_KEY=fs.readFileSync(__dirname+"/../keys/privateKey.pem")
+const PUBLIC_KEY=fs.readFileSync(__dirname+'/../keys/publicKey.pem')
 
 function genPassword(password){
     var salt=crypto.randomBytes(32).toString('hex')
@@ -24,12 +24,12 @@ const validatePassword=(password,hash,salt)=>{
 }
 
 
-function issueJWT(admin){
+function issueJWT(admin,expiration){
 
  
     const username=admin.username;
     console.log(username)
-    const expiresIn='2w'
+    const expiresIn=expiration;
     const payload={
         sub:username,
         iat:Date.now()
@@ -39,16 +39,31 @@ function issueJWT(admin){
 const signedToken=jwt.sign(payload,PRIVATE_KEY,{expiresIn:expiresIn,algorithm:'RS256'})
 
 return {
-    token:"Bearer "+signedToken,
+    token:signedToken,
     expires:expiresIn
 }
 
 
 }
 
+module.exports.authMiddleware=(req,res,next)=>{
+    const token=req.cookies.accessToken;
+    console.log(req.cookies.accessToken)
+    if(!token){
+        res.status(403).json({success:false,message:'Forbidden'})
+    }
+    try{
+        const data=jwt.verify(token,PUBLIC_KEY)
+        console.log(data)
+        next()
+    }
 
+    catch(err){
+        res.status(401).json({success:false,message:'Unauthorized'})
+    }
 
-
+    
+}
 
 
 module.exports.genPassword=genPassword

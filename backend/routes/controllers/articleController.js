@@ -9,6 +9,7 @@ const {Author}=require("../../models/author")
 
 module.exports.getArticles=async(req,res)=>{
 
+        console.log(req.headers.offset,req.headers.limit)
             await Article.findAndCountAll({offset:req.headers.offset?req.headers.offset:0,limit:req.headers.limit?req.headers.limit:null,include:[Author],order:[[req.headers.orderfield?req.headers.orderfield:'title',req.headers.ordertype?req.headers.ordertype:'ASC']]}).then((result)=>{
                 res.status(200).json({result,message:"Data loaded successfully"})
             }).catch((err)=>{
@@ -62,21 +63,16 @@ module.exports.getArticlesByQuery=async(req,res)=>{
 }
 
 else if(req.query.topic){
+    console.log('In Topic Search Function')
     Article.findAndCountAll({
+
         where:{
             topic:{
                 [Op.like]:req.query.topic?`%${req.query.topic}%`:'% %'
             }
           
             
-        },include:[{
-            model:Author,
-            where:{
-                name:{
-                    [Op.iLike]:req.query.author?`${req.query.author}%`:'% %'
-                }
-            }
-        }]
+        },include:[Author]
 
    }).then((result)=>{
        console.log(req.query.topic,result)
@@ -90,6 +86,7 @@ else if(req.query.topic){
 }
 
 else{
+    console.log('In General Function',req.query)
 Article.findAndCountAll({
     where:{
         title:{
@@ -103,13 +100,13 @@ Article.findAndCountAll({
         model:Author,
         where:{
             name:{
-                [Op.iLike]:req.query.author?`${req.query.author}%`:'% %'
+                [Op.iLike]:req.query.author?`%${req.query.author}%`:'% %'
             }
         }
     }]
 
 }).then((result)=>{
-   console.log(req.query.topic,result)
+   console.log(result.data)
 
    res.status(200).json({success:true,result:result,message:'Query Processed'})
 }).catch((err)=>{

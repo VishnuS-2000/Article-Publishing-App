@@ -5,12 +5,14 @@ const {createArticle, updateArticle,deleteArticle}=require("./controllers/articl
 const {signUp,signIn}=require("../routes/controllers/adminController")
 
 
+const {authMiddleware}=require("../utils/auth")
+
 const {upload}=require("../config/multer")
 
 router.post("/register",signUp)
 router.post("/login",signIn)
 
- router.use(passport.authenticate('jwt',{session:false}))
+router.use(passport.authenticate('jwt',{session:false}))
 
 
 router.post("/authors",createAuthor)

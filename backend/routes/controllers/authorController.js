@@ -1,10 +1,12 @@
 const {Author}=require("../../models/author")
+const {Article}=require('../../models/article')
+
 const {QueryTypes}=require('sequelize')
 const {sequelize}=require("../../config/database")
 
 module.exports.getAuthors=async(req,res)=>{
 
-        await Author.findAndCountAll({offset:req.body.offset,limit:req.body.limit}).then((authors)=>{
+        await Author.findAndCountAll({offset:req.body.offset,limit:req.body.limit,include:[Article]}).then((authors)=>{
             res.status(200).json({success:true,result:authors,message:"Data loaded successfully"})
         }).catch((err)=>{
             res.status(404).json({success:false,message:"Unknown Error Occurred"})
@@ -15,7 +17,7 @@ module.exports.getAuthors=async(req,res)=>{
 
 module.exports.getAuthorById=async(req,res)=>{
 
-    await Author.findOne({where:{id:req.params.id}}).then((author)=>{
+    await Author.findOne({where:{id:req.params.id},include:[Article]}).then((author)=>{
 
         res.status(200).json({success:true,result:author,message:"Data loaded successfully"})
 
