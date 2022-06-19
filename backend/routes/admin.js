@@ -31,7 +31,7 @@ router.post("/upload",upload.single('file'),(req,res)=>{
         res.status(500).json({success:false,message:"Internal Error,file not found"})
     }
 
-    res.status(200).json({success:true,data:req.file.filename,message:'Image upload successfull'})
+    res.status(200).json({success:true,filename:req.file.filename,message:'Image upload successfull'})
 })
 
 

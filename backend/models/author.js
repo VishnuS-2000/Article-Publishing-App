@@ -18,15 +18,11 @@ Author.init({
     bio:{
         type:DataTypes.STRING
     },
-    articlesPublished:{
-        type:DataTypes.INTEGER,
-        defaultValue:0
-    },
     email:{
         type:DataTypes.STRING
     },
     specialization:{
-        type:DataTypes.ARRAY(STRING)
+        type:DataTypes.STRING
     },
     photo:{
            type:DataTypes.STRING

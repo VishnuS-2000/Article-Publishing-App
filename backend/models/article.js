@@ -16,20 +16,15 @@ Article.init({
         type:DataTypes.STRING,
         allowNull:false
     },
-    subtitle:{
-        type:DataTypes.STRING
-    },topic:{
+    topic:{
         type:DataTypes.STRING,
         allowNull:false
     },
     content:{
         type:DataTypes.TEXT
     },
-    references:{
-        type:DataTypes.ARRAY(DataTypes.STRING)
-    },
-     outline:{
-        type:DataTypes.ARRAY(DataTypes.STRING)
+    richText:{
+        type:DataTypes.TEXT
     },
     image:{
         type:DataTypes.ARRAY(DataTypes.STRING)

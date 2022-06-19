@@ -45,9 +45,10 @@ module.exports.createAuthor=async(req,res)=>{
     const author=Author.build({
         id:req.body.id,
         name:req.body.name,
-        designation:req.body.designation,
-        details:req.body.details,
-        photo:req.body.photoUrl
+        email:req.body.email,
+        bio:req.body.bio,
+        photo:req.body.photo,
+        specialization:req.body.specialization
 
     })
     author.save().then((author)=>{

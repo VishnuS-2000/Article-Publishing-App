@@ -139,14 +139,14 @@ module.exports.createArticle=async(req,res)=>{
 
     const article=await Article.build({
         title:req.body.title,
-        subtitle:req.body.subtitle,
         topic:req.body.topic,
-        outline:req.body.outline,
         content:req.body.content,
-        references:req.body.references,
+        richText:req.body.richText,
         authorId:req.body.authorId,
         image:req.body.imageUrl
     })
+
+    
 
     article.save().then((article)=>{
         res.status(201).json({success:true,result:article,messge:"Article Created"})
