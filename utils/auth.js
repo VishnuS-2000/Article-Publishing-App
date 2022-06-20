@@ -2,8 +2,8 @@ const crypto=require('crypto')
 const jwt=require('jsonwebtoken')
 const fs=require('fs')
 
-const PRIVATE_KEY=fs.readFileSync(__dirname+"/../keys/privateKey.pem")
-const PUBLIC_KEY=fs.readFileSync(__dirname+'/../keys/publicKey.pem')
+
+const PRIVATE_KEY=process.env.PRIVATE_KEY
 
 function genPassword(password){
     var salt=crypto.randomBytes(32).toString('hex')
