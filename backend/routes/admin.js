@@ -2,7 +2,7 @@ const passport=require('passport')
 const router=require('express').Router()
 const {createAuthor,updateAuthor,deleteAuthor}=require("./controllers/authorController")
 const {createArticle, updateArticle,deleteArticle}=require("./controllers/articleController")
-const {signUp,signIn}=require("../routes/controllers/adminController")
+const {signUp,signIn, forgotPassword,verifyPassword, changePassword}=require("../routes/controllers/adminController")
 
 
 const {authMiddleware}=require("../utils/auth")
@@ -11,6 +11,9 @@ const {upload}=require("../config/multer")
 
 router.post("/register",signUp)
 router.post("/login",signIn)
+router.post("/forgotPassword",forgotPassword)
+router.post('/verifyPassword',verifyPassword)
+router.post('/changePassword',changePassword)
 
 router.use(passport.authenticate('jwt',{session:false}))
 

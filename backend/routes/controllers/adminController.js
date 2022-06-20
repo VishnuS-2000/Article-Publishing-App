@@ -1,5 +1,9 @@
 const {Admin}=require("../../models/admin")
+const {Token}=require('../../models/token')
 const {genPassword,validatePassword,issueJWT}=require("../../utils/auth")
+const crypto=require('crypto')
+const {sendMail}=require('../../config/nodemailer')
+
 
 
 
@@ -11,6 +15,7 @@ module.exports.signUp=async(req,res)=>{
     const newAdmin=Admin.build({
         username:req.body.username,
         password:hash,
+        email:req.body.email,
         salt:salt
     })  
 
@@ -61,9 +66,76 @@ else{
 
 
 
-module.exports.forgotPassword=()=>{
+module.exports.forgotPassword=async(req,res)=>{
+
+  const admin=await Admin.findOne({where:{email:req.body.email}}).then((admin)=>{
+
+    return admin
+
+  }).catch((err)=>{
+      res.status(401).json({success:false,message:'Invalid Email'})
+  })
+
+
+  try{
+
+        const token=await Token.findOne({userId:admin.id})
+        if(token){
+         token.destroy()
+        }
+
+    const newToken=crypto.randomBytes(6).toString('hex')
+    console.log(newToken)
+    const tokenEntry=Token.build({id:admin.id,token:newToken})
+
+    sendMail(admin.email,'Password Reset',`<h1>Code for Password Reset: <b>${newToken}</b></h1>`)
+
+    tokenEntry.save()
+    res.status(200).json({success:true,message:'Password reset mail sent successfully'})
+
+  }
+  catch(err){
+    res.status(422).json({success:false,message:err.message})
+  }
+
 
 }
+
+
+
+module.exports.verifyPassword=async(req,res)=>{
+
+    try{
+        if(!req.body.token){
+            throw new Error('Invalid Token')
+        }
+
+        const tokenEntry=await Token.findOne({userId:req.body.id})
+        const admin=await Admin.findOne({where:{username:req.body.username}})
+
+        if(tokenEntry.token===req.body.token&&admin){
+            const {salt,hash}=genPassword(req.body.password)
+            
+            admin.set({salt:salt,password:hash})
+
+            admin.save()
+
+            res.status(200).json({success:true,message:'Password successfully updated '})
+        }
+        else{
+            throw new Error('Unauthorized')
+        }
+
+    }
+    catch(err){
+        res.status(401).json({sucess:true,message:err.message})
+    }
+
+}
+
+
+
+
 
 module.exports.changePassword=()=>{
     

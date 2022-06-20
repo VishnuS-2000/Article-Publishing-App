@@ -12,7 +12,13 @@ Admin.init({
     username:{
         type:DataTypes.STRING,
         allowNull:false,
-        primaryKey:true
+        primaryKey:true,
+        unique:true
+    },
+    email:{
+        type:DataTypes.STRING,
+        allowNull:false,
+        unique:true
     },
     password:{
         type:DataTypes.STRING,
