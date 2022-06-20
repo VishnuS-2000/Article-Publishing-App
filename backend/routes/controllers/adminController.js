@@ -68,17 +68,15 @@ else{
 
 module.exports.forgotPassword=async(req,res)=>{
 
-  const admin=await Admin.findOne({where:{email:req.body.email}}).then((admin)=>{
-
-    return admin
-
-  }).catch((err)=>{
-      res.status(401).json({success:false,message:'Invalid Email'})
-  })
+ 
 
 
   try{
+    const admin=await Admin.findOne({where:{email:req.body.email}})
 
+    if(!admin){
+      throw new Error('Invalid Email')
+    }
         const token=await Token.findOne({userId:admin.id})
         if(token){
          token.destroy()
@@ -88,7 +86,7 @@ module.exports.forgotPassword=async(req,res)=>{
     console.log(newToken)
     const tokenEntry=Token.build({id:admin.id,token:newToken})
 
-    sendMail(admin.email,'Password Reset',`<h1>Code for Password Reset: <b>${newToken}</b></h1>`)
+    sendMail(admin.email,'Password Reset',`<h3>Verification Code for Admin Password Reset  :<b>${newToken}</b></h3>`)
 
     tokenEntry.save()
     res.status(200).json({success:true,message:'Password reset mail sent successfully'})
@@ -110,10 +108,13 @@ module.exports.verifyPassword=async(req,res)=>{
             throw new Error('Invalid Token')
         }
 
-        const tokenEntry=await Token.findOne({userId:req.body.id})
-        const admin=await Admin.findOne({where:{username:req.body.username}})
+        const admin=await Admin.findOne({where:{email:req.body.email}})
+        
+     
+        const tokenEntry=await Token.findOne({userId:admin.id})
 
-        if(tokenEntry.token===req.body.token&&admin){
+        if(tokenEntry.token===req.body.token){
+            console.log('verified')
             const {salt,hash}=genPassword(req.body.password)
             
             admin.set({salt:salt,password:hash})
@@ -138,5 +139,6 @@ module.exports.verifyPassword=async(req,res)=>{
 
 
 module.exports.changePassword=()=>{
+    
     
 }
