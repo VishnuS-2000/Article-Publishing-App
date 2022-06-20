@@ -22,8 +22,9 @@ module.exports.signUp=async(req,res)=>{
     await newAdmin.save().then((admin)=>{
 
         // console.log(admin.toJSON())
+        const data=issueJWT(admin)
 
-        res.status(200).json({success:true,admin:admin,message:"Successfully registered Admin"})
+        res.status(200).json({success:true,admin:admin,token:data.token,expiresIn:data.expiresIn,message:"Successfully registered Admin"})
     }).catch((err)=>{
     res.status(422).json({error:err,message:"Unknown Error Occured"})
 })
