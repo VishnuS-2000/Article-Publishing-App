@@ -63,7 +63,7 @@ module.exports.getArticlesByQuery=async(req,res)=>{
 }
 
 else if(req.query.topic){
-    console.log('In Topic Search Function')
+
     Article.findAndCountAll({
 
         where:{
@@ -86,7 +86,7 @@ else if(req.query.topic){
 }
 
 else{
-    console.log('In General Function',req.query)
+
 Article.findAndCountAll({
     where:{
         title:{
@@ -195,4 +195,17 @@ module.exports.deleteArticle=async(req,res)=>{
 
    
 
+}
+
+
+module.exports.groupDeleteArticles=async(req,res)=>{
+
+    try{
+        await Articles.destroy({where:{id:req.body.ids}})
+        res.status(200).json({success:true,message:'Articles deleted successfully'})
+    }
+
+    catch(err){
+        res.status(401).json({success:false,message:'Failed to delete authors'})
+    }
 }

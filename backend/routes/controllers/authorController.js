@@ -3,6 +3,7 @@ const {Article}=require('../../models/article')
 
 const {QueryTypes}=require('sequelize')
 const {sequelize}=require("../../config/database")
+const { Model } = require("mongoose")
 
 module.exports.getAuthors=async(req,res)=>{
 
@@ -95,3 +96,19 @@ module.exports.deleteAuthor=async(req,res)=>{
 
 }
 
+
+
+module.exports.groupDeleteAuthors=async(req,res)=>{
+
+    console.log(req.headers.ids)
+
+
+    try{
+        await Author.destroy({where:{id:req.headers.ids.split(',')}})
+        res.status(200).json({success:true,message:'Authors deleted successfully'})
+    }
+
+    catch(err){
+        res.status(401).json({success:false,message:'Failed to delete authors'})
+    }
+}

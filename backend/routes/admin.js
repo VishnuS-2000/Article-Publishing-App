@@ -1,8 +1,8 @@
 const passport=require('passport')
 const router=require('express').Router()
-const {createAuthor,updateAuthor,deleteAuthor}=require("./controllers/authorController")
-const {createArticle, updateArticle,deleteArticle}=require("./controllers/articleController")
-const {signUp,signIn, forgotPassword,verifyPassword, changePassword}=require("../routes/controllers/adminController")
+const {createAuthor,updateAuthor,deleteAuthor, groupDeleteAuthors}=require("./controllers/authorController")
+const {createArticle, updateArticle,deleteArticle, groupDeleteArticles}=require("./controllers/articleController")
+const {signUp,signIn, forgotPassword,verifyPassword, changePassword, getAdmin, changeEmail}=require("../routes/controllers/adminController")
 
 
 const {authMiddleware}=require("../utils/auth")
@@ -13,18 +13,28 @@ router.post("/register",signUp)
 router.post("/login",signIn)
 router.post("/forgotPassword",forgotPassword)
 router.post('/verifyPassword',verifyPassword)
-router.post('/changePassword',changePassword)
+
 
 router.use(passport.authenticate('jwt',{session:false}))
+
+router.get('/',getAdmin)
+router.post('/changeEmail',changeEmail)
+router.post('/changePassword',changePassword)
 
 
 router.post("/authors",createAuthor)
 router.put("/author/:id",updateAuthor)
+
+router.delete("/authors/",groupDeleteAuthors)
 router.delete("/author/:id",deleteAuthor)
 
 
+
 router.post("/articles",createArticle)
+
 router.put("/article/:id",updateArticle)
+
+router.delete("/articles/",groupDeleteArticles)
 router.delete("/article/:id",deleteArticle)
 
 

@@ -119,7 +119,7 @@ module.exports.verifyPassword=async(req,res)=>{
             
             admin.set({salt:salt,password:hash})
 
-            admin.save()
+            await admin.save()
 
             res.status(200).json({success:true,message:'Password successfully updated '})
         }
@@ -135,10 +135,63 @@ module.exports.verifyPassword=async(req,res)=>{
 }
 
 
+module.exports.getAdmin=async(req,res)=>{
+    try{
+    const admin=await Admin.findOne({where:{username:req.headers.user}})
+        res.status(200).json({success:true,result:{email:admin.email},message:'Successfully Loaded Data'})
+    }
+    catch(err){
+        res.status(401).json({success:false,message:'Unknown error occurrec'})
+    }
 
-
-
-module.exports.changePassword=()=>{
-    
-    
 }
+
+module.exports.changePassword=async(req,res)=>{
+    
+    try{
+    const admin=await Admin.findOne({where:{username:req.body.username}})
+
+    if(req.body.newPassword){
+        if(validatePassword(req.body.password,admin.password,admin.salt)){
+
+            const {salt,hash}=genPassword(req.body.newPassword)
+            admin.set({salt:salt,password:hash})
+            await admin.save()
+            res.status(200).json({success:true,message:'Password updated successfully'})
+        }
+        else{
+        throw new Error('Invalid Credentials')
+        }
+
+    }
+    else{
+    throw new Error('New Password is not defined')
+    }
+}
+
+catch(err){
+    res.status(401).json({success:false,message:err.message})
+}
+
+}
+
+
+
+
+module.exports.changeEmail=async(req,res)=>{
+    try{
+        if(!req.body.email){
+            throw new Error('Email not provided')
+        }
+        const admin=await Admin.findOne({where:{username:req.body.username}})
+
+        admin.set({email:req.body.email})
+        admin.save()
+        res.status(200).json({success:true,message:'Email changed successfully'})
+        }
+    
+    catch(err){
+        res.status(401).json({success:false,message:err.message})
+    }
+}
+
