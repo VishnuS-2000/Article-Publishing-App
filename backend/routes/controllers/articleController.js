@@ -201,7 +201,7 @@ module.exports.deleteArticle=async(req,res)=>{
 module.exports.groupDeleteArticles=async(req,res)=>{
 
     try{
-        await Articles.destroy({where:{id:req.body.ids}})
+        await Articles.destroy({where:{id:req.headers.ids.split(',')}})
         res.status(200).json({success:true,message:'Articles deleted successfully'})
     }
 
