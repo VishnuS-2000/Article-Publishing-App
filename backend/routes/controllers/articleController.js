@@ -46,7 +46,7 @@ module.exports.getArticlesByQuery=async(req,res)=>{
 
 
    if(req.query.term){
-       Article.findAndCountAll({
+      await  Article.findAndCountAll({
         where:{
             title:{
                 [Op.iLike]:`%${req.query.term}%`
@@ -64,7 +64,7 @@ module.exports.getArticlesByQuery=async(req,res)=>{
 
 else if(req.query.topic){
 
-    Article.findAndCountAll({
+    await Article.findAndCountAll({
 
         where:{
             topic:{
@@ -87,7 +87,7 @@ else if(req.query.topic){
 
 else{
 
-Article.findAndCountAll({
+await Article.findAndCountAll({
     where:{
         title:{
             [Op.iLike]:req.query.title?`%${req.query.title}%`:'% %'
@@ -137,6 +137,9 @@ module.exports.createArticle=async(req,res)=>{
 
 }
 
+
+
+
     const article=await Article.build({
         title:req.body.title,
         topic:req.body.topic,
@@ -180,6 +183,7 @@ module.exports.updateArticle=async(req,res)=>{
 
 
 module.exports.deleteArticle=async(req,res)=>{
+    console.log(req.params.id)
     const article=await Article.findOne({where:{id:req.params.id}}).then((article)=>{
         return article
 
@@ -188,7 +192,7 @@ module.exports.deleteArticle=async(req,res)=>{
         res.status(401).json({success:false,error:err,message:"Article with given id not found"})
 
     })
-
+    console.log(article)
     article.destroy().then(()=>{
         res.status(200).json({success:true,messge:"Article Deleted"})
     }).catch((err)=>res.status(422).json({success:false,error:err,message:"Unable to delete the article"}))
@@ -199,13 +203,15 @@ module.exports.deleteArticle=async(req,res)=>{
 
 
 module.exports.groupDeleteArticles=async(req,res)=>{
-
+    console.log(req.headers.ids.split(','))
     try{
-        await Articles.destroy({where:{id:req.headers.ids.split(',')}})
+        await Article.destroy({where:{id:req.headers.ids.split(',')}})
         res.status(200).json({success:true,message:'Articles deleted successfully'})
     }
 
     catch(err){
-        res.status(401).json({success:false,message:'Failed to delete authors'})
+
+        res.status(401).json({success:false,message:'Failed to delete articles'})
     }
 }
+

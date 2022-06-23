@@ -4,8 +4,8 @@ const {createAuthor,updateAuthor,deleteAuthor, groupDeleteAuthors}=require("./co
 const {createArticle, updateArticle,deleteArticle, groupDeleteArticles}=require("./controllers/articleController")
 const {signUp,signIn, forgotPassword,verifyPassword, changePassword, getAdmin, changeEmail}=require("../routes/controllers/adminController")
 
+const {commonSearch}=require('./controllers/commonController')
 
-const {authMiddleware}=require("../utils/auth")
 
 const {upload}=require("../config/multer")
 
@@ -14,6 +14,7 @@ router.post("/login",signIn)
 router.post("/forgotPassword",forgotPassword)
 router.post('/verifyPassword',verifyPassword)
 
+router.get('/search',commonSearch)
 
 router.use(passport.authenticate('jwt',{session:false}))
 
@@ -36,6 +37,10 @@ router.put("/article/:id",updateArticle)
 
 router.delete("/articles/",groupDeleteArticles)
 router.delete("/article/:id",deleteArticle)
+
+
+
+
 
 
 router.post("/upload",upload.single('file'),(req,res)=>{
