@@ -1,6 +1,6 @@
 require('dotenv').config()
 const nodemailer=require('nodemailer')
-const googleKey=require('../keys/google.json')
+// const googleKey=require('../keys/google.json')
 const { google } = require("googleapis");
 const OAuth2 = google.auth.OAuth2;
 
