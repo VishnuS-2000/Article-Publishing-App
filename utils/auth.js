@@ -2,8 +2,13 @@ const crypto=require('crypto')
 const jwt=require('jsonwebtoken')
 const fs=require('fs')
 
-const PRIVATE_KEY=fs.readFileSync(__dirname+"/../keys/privateKey.pem")
-const PUBLIC_KEY=fs.readFileSync(__dirname+'/../keys/publicKey.pem')
+// Comment this if you are not using this in the deployment
+const PUBLIC_KEY=process.env.PUBLIC_KEY
+const PRIVATE_KEY=process.env.PRIVATE_KEY
+
+// Uncomment this when you are executing the project locally with the public key file in the keys folder
+//const PRIVATE_KEY=fs.readFileSync(__dirname+"/../keys/privateKey.pem")
+//const PUBLIC_KEY=fs.readFileSync(__dirname+'/../keys/publicKey.pem')
 
 function genPassword(password){
     var salt=crypto.randomBytes(32).toString('hex')
