@@ -4,9 +4,11 @@ const {Admin}= require('../models/admin')
 const JwtStratergy=require('passport-jwt').Strategy
 const ExtractJwt=require('passport-jwt').ExtractJwt
 
+// Comment this if you are not using this in the deployment
+const PUB_KEY=process.env.PUBLIC_KEY
 
-
-const PUB_KEY=fs.readFileSync(__dirname+"/../keys/publicKey.pem","utf-8")
+// Uncomment this when you are executing the project locally with the public key file in the keys folder
+//const PUB_KEY=fs.readFileSync(__dirname+"/../keys/publicKey.pem","utf-8")
 
 const options={
     jwtFromRequest:ExtractJwt.fromAuthHeaderAsBearerToken(),
