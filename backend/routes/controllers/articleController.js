@@ -75,7 +75,7 @@ else if(req.query.topic){
         },include:[Author]
 
    }).then((result)=>{
-       console.log(req.query.topic,result)
+
     
        res.status(200).json({success:true,result:result,message:'Query Processed'})
    }).catch((err)=>{
@@ -106,7 +106,7 @@ await Article.findAndCountAll({
     }]
 
 }).then((result)=>{
-   console.log(result.data)
+
 
    res.status(200).json({success:true,result:result,message:'Query Processed'})
 }).catch((err)=>{
@@ -127,7 +127,7 @@ module.exports.createArticle=async(req,res)=>{
     
     try{
         const data=upload.single('file')
-        console.log(data)
+
     }
 
     catch(err){
@@ -183,7 +183,7 @@ module.exports.updateArticle=async(req,res)=>{
 
 
 module.exports.deleteArticle=async(req,res)=>{
-    console.log(req.params.id)
+
     const article=await Article.findOne({where:{id:req.params.id}}).then((article)=>{
         return article
 
@@ -192,7 +192,7 @@ module.exports.deleteArticle=async(req,res)=>{
         res.status(401).json({success:false,error:err,message:"Article with given id not found"})
 
     })
-    console.log(article)
+
     article.destroy().then(()=>{
         res.status(200).json({success:true,messge:"Article Deleted"})
     }).catch((err)=>res.status(422).json({success:false,error:err,message:"Unable to delete the article"}))
@@ -203,7 +203,7 @@ module.exports.deleteArticle=async(req,res)=>{
 
 
 module.exports.groupDeleteArticles=async(req,res)=>{
-    console.log(req.headers.ids.split(','))
+ 
     try{
         await Article.destroy({where:{id:req.headers.ids.split(',')}})
         res.status(200).json({success:true,message:'Articles deleted successfully'})

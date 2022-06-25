@@ -28,7 +28,7 @@ function issueJWT(admin,expiration){
 
  
     const username=admin.username;
-    console.log(username)
+  
     const expiresIn=expiration;
     const payload={
         sub:username,
@@ -48,13 +48,13 @@ return {
 
 module.exports.authMiddleware=(req,res,next)=>{
     const token=req.cookies.accessToken;
-    console.log(req.cookies.accessToken)
+   
     if(!token){
         res.status(403).json({success:false,message:'Forbidden'})
     }
     try{
         const data=jwt.verify(token,PUBLIC_KEY)
-        console.log(data)
+
         next()
     }
 

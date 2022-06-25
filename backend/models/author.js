@@ -16,16 +16,14 @@ Author.init({
         allowNull:false,
     },
     bio:{
-        type:DataTypes.STRING
+        type:DataTypes.TEXT
     },
     email:{
-        type:DataTypes.STRING
+        type:DataTypes.STRING,
+        unique:true
     },
     specialization:{
         type:DataTypes.STRING
-    },
-    photo:{
-           type:DataTypes.STRING
     }
 
 },{
