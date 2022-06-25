@@ -33,7 +33,7 @@ function issueJWT(admin,expiration){
 
  
     const username=admin.username;
-    console.log(username)
+    // console.log(username)
     const expiresIn=expiration;
     const payload={
         sub:username,
