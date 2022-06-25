@@ -7,7 +7,7 @@ const { Model } = require("mongoose")
 
 module.exports.getAuthors=async(req,res)=>{
 
-        await Author.findAndCountAll({offset:req.body.offset,limit:req.body.limit,include:[Article]}).then((authors)=>{
+        await Author.findAndCountAll({offset:req.headers.offset,limit:req.headers.limit,distinct:true,include:[Article]}).then((authors)=>{
             res.status(200).json({success:true,result:authors,message:"Data loaded successfully"})
         }).catch((err)=>{
             res.status(404).json({success:false,message:"Unknown Error Occurred"})
