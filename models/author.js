@@ -26,6 +26,10 @@ Author.init({
     },
     specialization:{
         type:DataTypes.STRING
+    },
+    
+    photo:{
+        type:DataTypes.STRING
     }
 
 },{
