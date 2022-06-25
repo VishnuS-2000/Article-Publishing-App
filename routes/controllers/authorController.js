@@ -100,7 +100,7 @@ module.exports.deleteAuthor=async(req,res)=>{
 
 module.exports.groupDeleteAuthors=async(req,res)=>{
 
-    console.log(req.headers.ids)
+
 
 
     try{

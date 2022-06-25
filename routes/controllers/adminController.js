@@ -9,7 +9,6 @@ const {sendMail}=require('../../config/nodemailer')
 
 module.exports.signUp=async(req,res)=>{
 
-    console.log(req.body)
     const {salt,hash}=genPassword(req.body.password)
     
     const newAdmin=Admin.build({
@@ -21,7 +20,7 @@ module.exports.signUp=async(req,res)=>{
 
     await newAdmin.save().then((admin)=>{
 
-        // console.log(admin.toJSON())
+
 
         res.status(200).json({success:true,admin:admin,message:"Successfully registered Admin"})
     }).catch((err)=>{
@@ -41,7 +40,7 @@ module.exports.signIn=async(req,res)=>{
 
         if(validatePassword(req.body.password,admin.password,admin.salt)){
             const data=issueJWT(admin,'1d')
-            console.log(data)
+
             res.status(200).json({success:true,user:{name:admin.username,data},message:"Successfully authenticated Admin"})
             
     }
@@ -83,7 +82,7 @@ module.exports.forgotPassword=async(req,res)=>{
         }
 
     const newToken=crypto.randomBytes(6).toString('hex')
-    console.log(newToken)
+
     const tokenEntry=Token.build({id:admin.id,token:newToken})
 
     sendMail(admin.email,'Password Reset',`<h3>Verification Code for Admin Password Reset  :<b>${newToken}</b></h3>`)
@@ -114,7 +113,7 @@ module.exports.verifyPassword=async(req,res)=>{
         const tokenEntry=await Token.findOne({userId:admin.id})
 
         if(tokenEntry.token===req.body.token){
-            console.log('verified')
+  
             const {salt,hash}=genPassword(req.body.password)
             
             admin.set({salt:salt,password:hash})
