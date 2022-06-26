@@ -46,7 +46,7 @@ module.exports.commonSearch=async(req,res)=>{
                     [Op.iLike]:`${req.query.term}%`
                 }
 
-        },limit:req.headers.limit,offset:req.headers.offset,include:[Article]}).then((result)=>{
+        },limit:req.headers.limit,offset:req.headers.offset,distinct:true,include:[Article]}).then((result)=>{
           
             res.status(200).json({success:true,result:result})
         }).catch((err)=>{

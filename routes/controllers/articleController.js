@@ -9,7 +9,7 @@ const {Author}=require("../../models/author")
 
 module.exports.getArticles=async(req,res)=>{
 
-        console.log(req.headers.offset,req.headers.limit)
+        // console.log(req.headers.offset,req.headers.limit)
             await Article.findAndCountAll({offset:req.headers.offset?req.headers.offset:0,limit:req.headers.limit?req.headers.limit:null,include:[Author],order:[[req.headers.orderfield?req.headers.orderfield:'title',req.headers.ordertype?req.headers.ordertype:'ASC']]}).then((result)=>{
                 res.status(200).json({result,message:"Data loaded successfully"})
             }).catch((err)=>{
