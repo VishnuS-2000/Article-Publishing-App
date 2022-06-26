@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "start": "node app.js"
-},
+    "start": "node index.js"
+  },
   "dependencies": {
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -20,5 +20,20 @@
     "pg": "^8.7.3",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.20.1"
-  }
+  },
+  "name": "article-publishing-app",
+  "description": "Branch which is connected to Heroku.",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VishnuS-2000/Articles-API-V1.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/VishnuS-2000/Articles-API-V1/issues"
+  },
+  "homepage": "https://github.com/VishnuS-2000/Articles-API-V1#readme"
 }
