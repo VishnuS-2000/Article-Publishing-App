@@ -37,7 +37,28 @@ module.exports.getArticleById=async(req,res)=>{
 
 }
 
+module.exports.getStudentArticles=async(req,res)=>{
 
+
+    await Article.findAndCountAll({offset:req.headers.offset?req.headers.offset:0,limit:req.headers.limit?req.headers.limit:null,include:[
+      {  model:Author,
+        where:{
+            bio:{
+                [Op.iLike]:`%student%`
+            }
+        }}
+    ],order:[[req.headers.orderfield?req.headers.orderfield:'title',req.headers.ordertype?req.headers.ordertype:'ASC']]}).then((result)=>{
+        // console.log(result)
+        res.status(200).json({result,message:"Data loaded successfully"})
+    }).catch((err)=>{
+        console.log(err)
+        res.status(404).json({error:err,message:"Unkown Error Occured"})}
+
+
+    
+    )
+    
+}
 
 
 
